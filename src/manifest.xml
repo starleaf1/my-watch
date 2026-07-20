@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Huawei Watch Face manifest.
+
+  On-device this file is typically named `Com.Huawei.watchface` (no extension)
+  at the root of the packaged watch face. It is kept here as manifest.xml for
+  editability; the build step (tools/build.sh) copies it to the correct name.
+
+  TODO: Verify the exact element/attribute names against a known-good Band 9
+        watch face or the HUAWEI Watch Face Designer output. Field names below
+        follow the community-documented Huawei format and may need adjustment
+        for your target firmware.
+-->
+<WatchFace>
+  <!-- Metadata shown in the Huawei Health app -->
+  <Name>My Watch</Name>
+  <Author>your-name</Author>
+  <Version>1.0.0</Version>
+
+  <!-- Target device. Huawei Band 9 screen: 1.47" AMOLED, 194 x 368 px -->
+  <Device model="Band 9" />
+  <Screen width="194" height="368" shape="rectangle" />
+
+  <!-- Preview image shown in the watch face picker -->
+  <Preview>preview.png</Preview>
+
+  <!-- Entry layout descriptor -->
+  <Layout>watchface.xml</Layout>
+</WatchFace>

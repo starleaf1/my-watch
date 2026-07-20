@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Layout / element descriptor for the watch face.
+
+  Coordinate system: origin (0,0) at top-left, x to the right, y downward.
+  Screen is 194 x 368 px (Huawei Band 9). Center point is (97, 184).
+
+  This is a DIGITAL clock template. Swap the <DigitalClock> block for the
+  commented <AnalogClock> block below to build an analog face.
+
+  TODO: Confirm element/attribute names against your target format. The names
+        below are illustrative and grouped by purpose so they are easy to remap.
+-->
+<Layout width="194" height="368">
+
+  <!-- Background: absolute black (token: background #000000).
+       On AMOLED true black = pixels off, so we fill rather than ship a PNG. -->
+  <Rect x="0" y="0" width="194" height="368" color="#000000" />
+
+  <!-- ============================ TIME ============================ -->
+  <!-- Digital HH:MM using bitmap digit assets in assets/digits/.
+       Render 0.png-9.png + colon.png from Chakra Petch Bold (assets/fonts/)
+       so the clock matches the project typeface. -->
+
+  <DigitalClock x="97" y="140" align="center">
+    <Hours   image="digits/%d.png" />
+    <Colon   image="digits/colon.png" />
+    <Minutes image="digits/%d.png" />
+    <!-- format: 24h | 12h -->
+    <Format value="24h" />
+  </DigitalClock>
+
+  <!-- Analog alternative — uncomment and remove <DigitalClock> to use.
+  <AnalogClock x="97" y="184">
+    <Hand type="hour"   image="hands/hour.png"   pivotX="8" pivotY="60" />
+    <Hand type="minute" image="hands/minute.png" pivotX="6" pivotY="80" />
+    <Hand type="second" image="hands/second.png" pivotX="4" pivotY="90" />
+  </AnalogClock>
+  -->
+
+  <!-- ============================ DATE ============================ -->
+  <!-- System-drawn date text. Placeholder tokens (DD, MM, WWW) are resolved
+       by the device. -->
+  <Text x="97" y="205" align="center" font="fonts/ChakraPetch-Bold" size="20"
+        color="#AB7C5F" content="{WWW} {DD}/{MM}" /> <!-- token: standard -->
+
+
+  <!-- ========================= COMPLICATIONS ========================= -->
+  <!-- Step count -->
+  <Complication type="steps" x="50" y="270" align="center">
+    <Icon image="icons/steps.png" />
+    <Text font="fonts/ChakraPetch-Regular" size="16" color="#FFDA33" content="{VALUE}" /> <!-- token: primary -->
+  </Complication>
+
+  <!-- Heart rate -->
+  <Complication type="heart_rate" x="144" y="270" align="center">
+    <Icon image="icons/heart.png" />
+    <Text font="fonts/ChakraPetch-Regular" size="16" color="#FF2116" content="{VALUE}" /> <!-- token: danger_red -->
+  </Complication>
+
+  <!-- Battery percentage -->
+  <Complication type="battery" x="97" y="320" align="center">
+    <Icon image="icons/battery.png" />
+    <Text font="fonts/ChakraPetch-Regular" size="16" color="#00FFD4" content="{VALUE}%" /> <!-- token: alternate -->
+  </Complication>
+
+</Layout>

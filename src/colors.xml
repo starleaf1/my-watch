@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Canonical color palette for my-watch.
+
+  This is the single source of truth for the color scheme. The Huawei watch-face
+  format may not support named-token references, so colors are inlined as hex in
+  watchface.xml — each usage there is commented with its token name so values
+  stay traceable to this file. If you change a value here, grep watchface.xml for
+  the token name and update the inline hex to match.
+-->
+<Colors>
+  <!-- Absolute black. On AMOLED this means pixels OFF: best battery life and
+       no burn-in risk. Used as the canvas; do not ship a black PNG for it. -->
+  <Color name="background"    value="#000000" />
+
+  <!-- Warning red, tuned to evoke a car dashboard telltale (brake/ABS/engine):
+       saturated and slightly warm so it "glows" against black rather than
+       reading flat like pure #FF0000. Reserve for alerts / critical states. -->
+  <Color name="danger_red"    value="#FF2116" />
+
+  <!-- Primary accent — warm amber-yellow. Main highlight color. -->
+  <Color name="primary"       value="#FFDA33" />
+
+  <!-- Alternate accent — cyan/teal. Secondary highlight, contrasts primary. -->
+  <Color name="alternate"     value="#00FFD4" />
+
+  <!-- Standard — muted warm tan for regular text/labels. -->
+  <Color name="standard"      value="#AB7C5F" />
+
+  <!-- Standard dark — near-black warm brown for subtle fills / low emphasis. -->
+  <Color name="standard_dark" value="#1B130E" />
+</Colors>
