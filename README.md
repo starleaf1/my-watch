@@ -1,95 +1,82 @@
 # my-watch — Huawei Band 9 Watch Face
 
-A watch face project for the **Huawei Band 9** (1.47" AMOLED, **194 × 368 px**, rectangular).
+A watch face for the **Huawei Band 9** (1.47" AMOLED, **194 × 368 px**), designed
+to be sideloaded via **Gadgetbridge**.
 
-## Project structure
+## How this project is structured (and why)
+
+The Huawei Band watch-face format is **bitmap-only**: the firmware has no font
+engine and no color attributes — every digit and label is a pre-rendered image,
+and colors are baked into those images. The installable package is a `.hwt` ZIP
+containing a **compiled binary blob** (`com.huawei.watchface`).
+
+**There is no open-source tool that compiles that blob** — only Huawei's closed
+**Theme Studio** (or a closed GUI packer) can produce it. Gadgetbridge is purely
+an *installer*: it validates and uploads a finished `.hwt`, it does not build one.
+
+So this repo is the **design source of truth** for everything upstream of that
+compile step, and Theme Studio does the final compile:
 
 ```
 my-watch/
 ├── src/
-│   ├── manifest.xml      # Metadata + device/screen info (→ Com.Huawei.watchface)
-│   └── watchface.xml     # Layout: background, clock, date, complications
+│   ├── colors.xml            # Palette — source colors for rendering (single source of truth)
+│   └── description.xml       # HwTheme package descriptor (what Gadgetbridge validates)
 ├── assets/
-│   ├── backgrounds/      # Full-screen background(s), 194×368
-│   ├── digits/           # Bitmap digits 0.png–9.png, colon.png (digital clock)
-│   ├── hands/            # hour.png / minute.png / second.png (analog clock)
-│   ├── icons/            # Complication icons (steps, heart, battery, …)
-│   └── fonts/            # Bitmap/embedded fonts
-├── preview/
-│   └── preview.png       # Thumbnail shown in the watch-face picker
+│   ├── fonts/                # Chakra Petch TTFs — design source, rasterized (NOT packaged)
+│   ├── backgrounds/          # Hand-made background art (if any)
+│   └── icons/                # Hand-made complication icons
 ├── tools/
-│   └── build.sh          # Assembles + zips the package into dist/
-└── dist/                 # Build output (git-ignored)
+│   └── render_assets.py      # Renders glyph bitmaps from fonts + palette → build/rendered/
+├── docs/
+│   └── layout-spec.md        # Widget layout to reproduce in Theme Studio
+├── build/                    # Generated bitmaps (git-ignored, reproducible)
+└── preview/                  # cover.jpg (git-ignored, generated)
 ```
 
-## Color scheme
+## Workflow
 
-Canonical values live in [`src/colors.xml`](src/colors.xml). Refer to colors by
-token name; the hex is inlined in `watchface.xml` with a matching comment.
+```
+  colors.xml + fonts ─▶ render_assets.py ─▶ build/rendered/*.png ─┐
+                                                                  ├─▶ Theme Studio ─▶ my-watch.hwt ─▶ Gadgetbridge ─▶ Band 9
+  docs/layout-spec.md  (place widgets by hand in Theme Studio) ───┘
+  src/description.xml  (metadata / screen size, reconcile in Theme Studio)
+```
+
+1. **Render assets** — `python3 tools/render_assets.py` (needs Pillow). Writes
+   glyph bitmaps to `build/rendered/` and a preview to `preview/cover.jpg`.
+2. **Compile in Theme Studio** — import `build/rendered/` + `assets/` art, place
+   widgets following [docs/layout-spec.md](docs/layout-spec.md), set metadata to
+   match [src/description.xml](src/description.xml), export the `.hwt`.
+3. **Install** — open the `.hwt` on your phone, choose Gadgetbridge's
+   "FW/App installer", tap Install.
+
+## Design system
+
+- **Colors** — [src/colors.xml](src/colors.xml). `background` is absolute black
+  (AMOLED pixels off). See the table below.
+- **Typeface** — **Chakra Petch** (SIL OFL), geometric/rectangular with open
+  6/8/9. Rasterized into glyph bitmaps; see [fonts README](assets/fonts/README.md).
 
 | Token           | Hex       | Use                                            |
 |-----------------|-----------|------------------------------------------------|
 | `background`    | `#000000` | Absolute black canvas (AMOLED pixels off)      |
-| `danger_red`    | `#FF2116` | Alerts / critical states — dashboard-telltale red |
-| `primary`       | `#FFDA33` | Primary accent (amber-yellow)                  |
-| `alternate`     | `#00FFD4` | Secondary accent (cyan/teal)                   |
-| `standard`      | `#AB7C5F` | Regular text / labels (muted tan)              |
-| `standard_dark` | `#1B130E` | Subtle fills / low emphasis (warm near-black)  |
+| `danger_red`    | `#FF2116` | Alerts / heart rate — dashboard-telltale red   |
+| `primary`       | `#FFDA33` | Hero elements (the clock)                      |
+| `alternate`     | `#00FFD4` | Secondary accent                               |
+| `standard`      | `#AB7C5F` | Regular data / labels (muted tan)              |
+| `standard_dark` | `#1B130E` | Subtle fills / low emphasis                    |
 
-## Typography
+## ⚠️ Reality checks before you invest heavily
 
-Project typeface: **Chakra Petch** (SIL OFL) — geometric and rectangular with
-open 6/8/9 apertures that stay distinct at small sizes. Bundled in
-[`assets/fonts/`](assets/fonts/) as Regular + Bold; see the
-[fonts README](assets/fonts/README.md) for usage and adding weights.
+These are verified from Gadgetbridge's source and Huawei's Band widget reference:
 
-- **Bold** — date, and the source for the clock digit bitmaps
-- **Regular** — complication values and labels
-
-## Building
-
-```bash
-./tools/build.sh
-```
-
-This stages the descriptors + assets into `dist/watchface/`, names the manifest
-`Com.Huawei.watchface`, and produces `dist/my-watch.zip`.
-
-## Installing on the device
-
-Huawei does not offer a fully open, documented sideload path for band watch
-faces. Typical routes:
-
-1. **HUAWEI Watch Face Designer / Theme tooling** — import these assets, or use
-   this repo as the source of truth and rebuild there.
-2. **Huawei Health app** — official watch faces are pushed through the app's
-   watch-face store.
-3. **Sideloading** — the packaged archive usually must be renamed to Huawei's
-   watch-face extension and **signed** before the device accepts it.
-
-## ⚠️ Format caveat — verify before relying on this
-
-The Huawei watch-face package format is **not fully publicly documented** and
-varies by device and firmware. The XML tag/attribute names in `src/*.xml` follow
-the **community-documented** Huawei format and are provided as a *starting
-template*. Before investing heavily:
-
-- Compare against a **known-good Band 9 watch face** (unzip an existing one), or
-- Use the **HUAWEI Watch Face Designer** output as the schema reference,
-
-and adjust `src/manifest.xml` / `src/watchface.xml` element names accordingly.
-The directory layout, asset organization, and build script are sound regardless;
-only the XML schema specifics need confirming.
-
-## Asset specs (Band 9)
-
-| Asset        | Size / notes                                  |
-|--------------|-----------------------------------------------|
-| Background   | 194 × 368 px PNG                              |
-| Digits       | Consistent glyph box; transparent background  |
-| Hands        | Pre-rotated at 12 o'clock; note pivot in XML  |
-| Icons        | ~24–32 px, transparent PNG                    |
-| Preview      | 194 × 368 px (or picker thumbnail size)       |
-
-Keep the display **mostly dark** — AMOLED always-on style saves battery and
-avoids burn-in.
+- **Band 9 support in Gadgetbridge is experimental** (added May 2024, "coordinator
+  support only"). Watch-face upload on Band 9 is **unproven**, and **HarmonyOS
+  6.1+ firmware cannot install faces via Gadgetbridge at all**. Before building a
+  full face, confirm your Band 9 can install *any* custom face.
+- **The exact internal layout dialect for Band 9 is unverified.** `data_type`
+  names in the layout spec come from the older Band widget reference. The
+  reliable check: extract an existing Band 9 face and read its config.
+- **`description.xml` `<screen>` must match the device** or Gadgetbridge rejects
+  the file. Band 9 194×368 → code `HWHD07` / `368*194`.

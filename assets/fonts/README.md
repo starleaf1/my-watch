@@ -1,17 +1,19 @@
 # Fonts
 
 Project typeface: **Chakra Petch** — geometric, rectangular, with open 6/8/9
-apertures for legibility at small sizes. Used throughout the watch face.
+apertures for legibility at small sizes.
 
-## Bundled files
+**Important:** the Huawei Band format has no font engine — it cannot use a TTF at
+runtime. These files are **design sources only**: `tools/render_assets.py`
+rasterizes them into the glyph bitmaps in `build/rendered/`, which is what
+actually ships in the watch face. The TTFs are not packaged into the `.hwt`.
 
-| File                     | Weight  | Used for                          |
-|--------------------------|---------|-----------------------------------|
-| `ChakraPetch-Regular.ttf`| Regular | Complication values / labels      |
-| `ChakraPetch-Bold.ttf`   | Bold    | Date, and source for clock digits |
+## Files
 
-The digital clock digits (`assets/digits/0.png`–`9.png`, `colon.png`) should be
-rendered from **Chakra Petch Bold** so the bitmap clock matches the text.
+| File                     | Weight  | Rendered into                          |
+|--------------------------|---------|----------------------------------------|
+| `ChakraPetch-Bold.ttf`   | Bold    | Hero clock digits (`build/rendered/clock/`) |
+| `ChakraPetch-Regular.ttf`| Regular | Data digits (`build/rendered/data*/`)  |
 
 ## Source & license
 
@@ -28,4 +30,4 @@ curl -fsSL -o "ChakraPetch-SemiBold.ttf" \
   "https://github.com/google/fonts/raw/main/ofl/chakrapetch/ChakraPetch-SemiBold.ttf"
 ```
 
-Then reference it as `font="fonts/ChakraPetch-SemiBold"` in `src/watchface.xml`.
+Then point a `render_glyph_set(...)` call in `tools/render_assets.py` at it.

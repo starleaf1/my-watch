@@ -2,11 +2,11 @@
 <!--
   Canonical color palette for my-watch.
 
-  This is the single source of truth for the color scheme. The Huawei watch-face
-  format may not support named-token references, so colors are inlined as hex in
-  watchface.xml — each usage there is commented with its token name so values
-  stay traceable to this file. If you change a value here, grep watchface.xml for
-  the token name and update the inline hex to match.
+  Single source of truth for the color scheme. The Huawei Band format has NO
+  color attributes — colors are baked into the rendered bitmaps. So these values
+  are consumed by tools/render_assets.py, which paints the glyph images in them.
+  To recolor an element, render a glyph set in a different token (see
+  docs/layout-spec.md) and point that widget at the new folder in Theme Studio.
 -->
 <Colors>
   <!-- Absolute black. On AMOLED this means pixels OFF: best battery life and

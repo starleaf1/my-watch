@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  Package descriptor for the .hwt watch face.
+
+  This is the file Gadgetbridge actually parses and validates on install
+  (HuaweiFwHelper.parseAsWatchFace). The root MUST be <HwTheme> (or <HnTheme>
+  for Honor devices). Gadgetbridge cross-checks <screen> against the device.
+
+  NOTE: Huawei Theme Studio also emits a description.xml when you export. This
+  file is kept as the canonical metadata + a record of the values Gadgetbridge
+  requires; reconcile it with Theme Studio's output (or just paste these values
+  into Theme Studio's project settings).
+
+  VERIFY before install: unzip a known-good Band 9 .hwt and confirm the exact
+  <screen>/<version> values its description.xml uses. Band 9's 194x368 panel
+  maps to Gadgetbridge resolution code HWHD07 = "368*194" (height*width).
+-->
+<HwTheme>
+  <title>My Watch</title>
+  <title-cn>My Watch</title-cn>
+  <author>your-name</author>
+  <designer>your-name</designer>
+  <version>1.0.0</version>
+  <!-- height*width. MUST match the device or Gadgetbridge rejects the file. -->
+  <screen>368*194</screen>
+  <!-- Text on the Band is drawn from pre-rendered bitmaps, so these font
+       fields are metadata only; leave blank unless Theme Studio sets them. -->
+  <font></font>
+  <font-cn></font-cn>
+</HwTheme>

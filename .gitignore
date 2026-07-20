@@ -1,5 +1,9 @@
-# Build output
-/dist/
+# Generated bitmaps + preview (reproducible via tools/render_assets.py)
+/build/
+/preview/cover.jpg
+
+# Watch-face packages exported from Theme Studio
+*.hwt
 
 # OS / editor cruft
 .DS_Store
@@ -7,5 +11,3 @@ Thumbs.db
 *.swp
 .idea/
 .vscode/
-
-# Keep asset folders in git even when empty (see .gitkeep files)
